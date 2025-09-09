@@ -1,0 +1,10 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+*.swp
+*.DS_Store
+src/UPL/wwwroot/lib/
+**/appsettings.*.local.json

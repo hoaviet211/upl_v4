@@ -1,0 +1,35 @@
+@model IEnumerable<UPL.Domain.Entities.Category>
+@{
+    ViewData["Title"] = "Categories";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Categories</h2>
+    <a class="btn btn-primary" asp-action="Create">Create</a>
+    </div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Type</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Name</td>
+            <td>@item.Slug</td>
+            <td>@item.Type</td>
+            <td>
+                <a class="btn btn-sm btn-secondary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
