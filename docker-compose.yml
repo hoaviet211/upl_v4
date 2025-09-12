@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: upl_sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD:-Your_strong_password123}
+      - MSSQL_PID=Express
+    ports:
+      - "${DB_PORT:-14333}:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+  web:
+    build:
+      context: .
+      dockerfile: src/UPL/Dockerfile
+    container_name: upl_web
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__Default=Server=db;Database=UPL;User Id=sa;Password=${SA_PASSWORD:-Your_strong_password123};TrustServerCertificate=True;
+      - AUTO_MIGRATE=true
+    ports:
+      - "${WEB_PORT:-8080}:8080"
+    depends_on:
+      - db
+
+volumes:
+  mssql-data:

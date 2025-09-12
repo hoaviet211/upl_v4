@@ -1,26 +1,28 @@
-UPL - Skeleton (ASP.NET Core MVC, .NET 9)
+UPL — Skeleton (ASP.NET Core MVC, .NET 9)
 
-Setup
+Tài liệu đầy đủ xem tại `README.md` ở thư mục gốc của repo.
+
+Thiết lập nhanh (Development)
 
 - dotnet restore
-- dotnet tool install --global dotnet-ef
-- dotnet ef database update (migration already added: InitialCreate)
+- dotnet tool install --global dotnet-ef (nếu chưa có)
+- dotnet ef database update (đã có migration: InitialCreate)
 - dotnet run
 
-Notes
+Ghi chú
 
-- Default culture: vi-VN. DateTime stored in UTC; display convert to Asia/Ho_Chi_Minh.
-- Skeleton only: no auth flow, caching, or business logic.
+- Văn hóa mặc định: vi-VN. Thời gian lưu UTC; hiển thị theo Asia/Ho_Chi_Minh.
+- Đây là skeleton: chưa có auth flow đầy đủ, caching hay nghiệp vụ phức tạp.
 
-Seeded Accounts
+Tài khoản seed
 
-- Admin → admin@gmail.com / testing
-- Student → tam@gmail.com / testing
+- Admin: admin@gmail.com / testing
+- Student: tam@gmail.com / testing
 
 Structure
 
 - Areas: Public, Student, Staff, Admin.
-- Data: DbContext + Fluent API configurations (one per entity).
+- Data: DbContext + Fluent API configurations (mỗi entity một file).
 - Domain: Entities + Enums.
-- Infrastructure: Generic repository + sample CourseService.
+- Infrastructure: Generic repository + sample services.
 

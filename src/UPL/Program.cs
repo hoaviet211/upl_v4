@@ -8,6 +8,9 @@ using UPL.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Kestrel: hide server header
+builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
+
 // Localization services
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -51,6 +54,19 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Basic security headers
+app.Use(async (context, next) =>
+{
+    var headers = context.Response.Headers;
+    headers["X-Content-Type-Options"] = "nosniff";
+    headers["X-Frame-Options"] = "DENY";
+    headers["Referrer-Policy"] = "no-referrer";
+    headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()";
+    headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'";
+    await next();
+});
+
 app.UseRouting();
 
 // Static files
@@ -66,5 +82,13 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+// Optional: auto apply migrations when requested (e.g., in Docker)
+if ((Environment.GetEnvironmentVariable("AUTO_MIGRATE") ?? "false").Equals("true", StringComparison.OrdinalIgnoreCase))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<UplDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();

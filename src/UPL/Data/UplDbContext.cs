@@ -44,8 +44,7 @@ public class UplDbContext : DbContext
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(UplDbContext).Assembly);
 
-        // Seed minimal roles and users
-        var hasher = new PasswordHasher<User>();
+        // Seed minimal roles and users (use static values to keep model deterministic)
 
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = 1, Name = "Admin" },
@@ -60,8 +59,8 @@ public class UplDbContext : DbContext
                 FullName = "System Admin",
                 Email = "admin@gmail.com",
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                PasswordHash = hasher.HashPassword(null!, "testing")
+                CreatedAt = new DateTime(2025, 9, 9, 2, 58, 50, 968, DateTimeKind.Utc).AddTicks(6125),
+                PasswordHash = "AQAAAAIAAYagAAAAEJYaSkfekBufSe9yDbOZBC2ezwl6gUg9jI2DSvw+C04Tm1Jgn3Z+llzy6EA/ItSREQ=="
             },
             new User
             {
@@ -69,8 +68,8 @@ public class UplDbContext : DbContext
                 FullName = "Test Student",
                 Email = "tam@gmail.com",
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                PasswordHash = hasher.HashPassword(null!, "testing")
+                CreatedAt = new DateTime(2025, 9, 9, 2, 58, 51, 30, DateTimeKind.Utc).AddTicks(3421),
+                PasswordHash = "AQAAAAIAAYagAAAAEHFpkDiI7Zd6OpTdAEXG1hQX6H3QJuXkfzr2UeaJM7NAB9jKE3I2f9IQrA4T015eig=="
             }
         );
 
@@ -91,4 +90,3 @@ public class UplDbContext : DbContext
         );
     }
 }
-
