@@ -5,6 +5,8 @@ using UPL.Common;
 using UPL.Data;
 using UPL.Infrastructure.Repositories;
 using UPL.Infrastructure.Services;
+using UPL.Infrastructure.Services.Video;
+using UPL.Infrastructure.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,20 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(EfRepository<>))
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IProgrammeService, ProgrammeService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// Video providers + HttpClients
+builder.Services.Configure<YouTubeOptions>(builder.Configuration.GetSection(YouTubeOptions.SectionName));
+builder.Services.Configure<TikTokOptions>(builder.Configuration.GetSection(TikTokOptions.SectionName));
+builder.Services.AddTransient<SimpleRetryHandler>();
+builder.Services.AddHttpClient<IYouTubeVideoProvider, YouTubeVideoProvider>(c =>
+{
+    c.Timeout = TimeSpan.FromSeconds(30);
+}).AddHttpMessageHandler<SimpleRetryHandler>();
+
+builder.Services.AddHttpClient<ITikTokVideoProvider, TikTokVideoProvider>(c =>
+{
+    c.Timeout = TimeSpan.FromSeconds(45);
+}).AddHttpMessageHandler<SimpleRetryHandler>();
 
 var app = builder.Build();
 
@@ -63,7 +79,19 @@ app.Use(async (context, next) =>
     headers["X-Frame-Options"] = "DENY";
     headers["Referrer-Policy"] = "no-referrer";
     headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()";
-    headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'";
+    headers["Content-Security-Policy"] = string.Join("; ", new[]
+    {
+        "default-src 'self' blob:",
+        "img-src 'self' data:",
+        "object-src 'none'",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        // Allow Bootstrap CSS and JS/jQuery from known CDNs
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://code.jquery.com",
+        // Optional: fonts if needed by CSS
+        "font-src 'self' data:"
+    });
     await next();
 });
 

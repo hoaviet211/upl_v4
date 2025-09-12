@@ -1,0 +1,244 @@
+@{
+    ViewData["Title"] = "Report Social";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">Lấy danh sách video từ YouTube/TikTok</h2>
+    <div class="mb-3">
+        <label for="profileUrl" class="form-label">Link profile</label>
+        <input id="profileUrl" class="form-control" type="text" placeholder="Dán link profile YouTube hoặc TikTok" />
+    </div>
+    <div class="mb-3 d-flex gap-2 align-items-center flex-wrap">
+        <button id="btnFetch" class="btn btn-primary">Lấy danh sách video</button>
+        <button id="btnClear" class="btn btn-secondary">Xóa</button>
+        <button id="btnExport" class="btn btn-success">export to excel</button>
+        <button id="btnCancel" class="btn btn-outline-danger" style="display:none">Dừng tải</button>
+        <div class="form-check ms-2">
+            <input class="form-check-input" type="checkbox" id="chkHeadless" checked>
+            <label class="form-check-label" for="chkHeadless">Dùng headless cho TikTok</label>
+        </div>
+        <div class="ms-2 d-flex align-items-center gap-2">
+            <label for="inputLimit" class="form-label mb-0">Limit</label>
+            <input type="number" id="inputLimit" class="form-control" style="width:120px" placeholder="All" min="1">
+        </div>
+    </div>
+    <div id="status" class="mb-2 text-muted" style="display:none"></div>
+    <div class="mb-3" id="progressWrap" style="display:none">
+        <div class="progress" role="progressbar" aria-label="progress" aria-valuemin="0" aria-valuemax="100">
+            <div id="progressBar" class="progress-bar" style="width: 0%">0%</div>
+        </div>
+        <div class="small mt-1" id="progressText"></div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped" id="resultTable" style="display:none">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>tên video</th>
+                    <th>link</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="small text-muted">Tip: nhập limit để giới hạn số lượng tải.</div>
+</div>
+
+<script>
+    const elUrl = document.getElementById('profileUrl');
+    const elBtn = document.getElementById('btnFetch');
+    const elClear = document.getElementById('btnClear');
+    const elStatus = document.getElementById('status');
+    const elExport = document.getElementById('btnExport');
+    const elCancel = document.getElementById('btnCancel');
+    const elChkHeadless = document.getElementById('chkHeadless');
+    const elLimit = document.getElementById('inputLimit');
+    const elTable = document.getElementById('resultTable');
+    const elTbody = elTable.querySelector('tbody');
+    const elProgWrap = document.getElementById('progressWrap');
+    const elProgBar = document.getElementById('progressBar');
+    const elProgText = document.getElementById('progressText');
+
+    let lastItems = [];
+    let currentAbort = null;
+
+    function setStatus(msg) {
+        if (!msg) { elStatus.style.display = 'none'; elStatus.textContent = ''; return; }
+        elStatus.textContent = msg; elStatus.style.display = '';
+    }
+
+    function setProgress(p) {
+        if (p == null) { elProgWrap.style.display = 'none'; elProgBar.style.width = '0%'; elProgBar.textContent = '0%'; elProgText.textContent = ''; return; }
+        elProgWrap.style.display = '';
+        const pct = Math.max(0, Math.min(100, Math.round(p.percent)));
+        elProgBar.style.width = pct + '%';
+        elProgBar.textContent = pct + '%';
+        elProgText.textContent = `${p.current}/${p.total ?? '?'} videos`;
+    }
+
+    function clearResults() {
+        elTbody.innerHTML = '';
+        elTable.style.display = 'none';
+        setStatus('');
+        setProgress(null);
+        lastItems = [];
+    }
+
+    function detectPlatform(url) {
+        try {
+            const u = new URL(url);
+            const h = u.host.toLowerCase();
+            if (h.includes('youtube.com') || h.includes('youtu.be')) return 'youtube';
+            if (h.includes('tiktok.com')) return 'tiktok';
+            return 'unknown';
+        } catch { return 'unknown'; }
+    }
+
+    function appendRows(newItems) {
+        const startIndex = lastItems.length;
+        for (let i = 0; i < newItems.length; i++) {
+            const it = newItems[i];
+            lastItems.push(it);
+            const tr = document.createElement('tr');
+            const tdId = document.createElement('td'); tdId.textContent = (startIndex + i + 1).toString();
+            const tdTitle = document.createElement('td'); tdTitle.textContent = it.title || it.Title || '';
+            const tdLink = document.createElement('td');
+            const a = document.createElement('a'); a.href = it.url || it.Url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Mở';
+            tdLink.appendChild(a);
+            tr.appendChild(tdId); tr.appendChild(tdTitle); tr.appendChild(tdLink);
+            elTbody.appendChild(tr);
+        }
+        elTable.style.display = lastItems.length ? '' : 'none';
+    }
+
+    async function fetchYoutubeAllWithProgressAndAppend(profileUrl) {
+        const limitVal = parseInt(elLimit?.value || '0', 10) || 0;
+        let total = null;
+        try {
+            const meta = await fetch(`/api/videos/youtube/metadata?${new URLSearchParams({ profileUrl })}`, { signal: currentAbort?.signal });
+            if (meta.ok) {
+                const j = await meta.json();
+                if (j && typeof j.totalCount === 'number') total = j.totalCount;
+            }
+        } catch {}
+
+        const effectiveTotal = total ? (limitVal > 0 ? Math.min(total, limitVal) : total) : (limitVal > 0 ? limitVal : null);
+        let pageToken = null;
+        do {
+            const qs = new URLSearchParams({ profileUrl });
+            if (limitVal > 0) {
+                const remaining = Math.max(0, limitVal - lastItems.length);
+                const pageSize = Math.max(1, Math.min(50, remaining || 50));
+                qs.set('pageSize', String(pageSize));
+            }
+            if (pageToken) qs.set('pageToken', pageToken);
+            const resp = await fetch(`/api/videos/youtube/page?${qs.toString()}`, { signal: currentAbort?.signal });
+            if (!resp.ok) throw new Error('Lỗi gọi API');
+            const page = await resp.json();
+            let items = page.items || [];
+            if (limitVal > 0) {
+                const remaining = Math.max(0, limitVal - lastItems.length);
+                if (remaining <= 0) { pageToken = null; items = []; }
+                else if (items.length > remaining) { items = items.slice(0, remaining); }
+            }
+            if (items.length) appendRows(items);
+            pageToken = page.nextPageToken || null;
+            const percent = effectiveTotal ? (lastItems.length / effectiveTotal) * 100 : (pageToken ? 95 : 100);
+            setProgress({ current: lastItems.length, total: effectiveTotal, percent });
+            if (limitVal > 0 && lastItems.length >= limitVal) break;
+        } while (pageToken);
+    }
+
+    async function fetchTikTok(url) {
+        const params = new URLSearchParams({ profileUrl: url });
+        if (elChkHeadless.checked) params.set('headless', 'true');
+        const lim = parseInt(elLimit?.value || '0', 10) || 0;
+        if (lim > 0) params.set('limit', String(lim));
+        const resp = await fetch(`/api/videos/tiktok?${params.toString()}`);
+        if (!resp.ok) throw new Error('Lỗi gọi API');
+        return await resp.json();
+    }
+
+    elBtn.addEventListener('click', async () => {
+        const url = elUrl.value.trim();
+        clearResults();
+        if (!url) { setStatus('Vui lòng nhập link'); return; }
+        try {
+            setStatus('Đang tải...');
+            elBtn.disabled = true;
+            elCancel.style.display = '';
+            currentAbort = new AbortController();
+            const platform = detectPlatform(url);
+            if (platform === 'tiktok') {
+                const items = await fetchTikTok(url);
+                appendRows(items);
+                setProgress({ current: lastItems.length, total: lastItems.length, percent: 100 });
+                setStatus(items.length ? '' : 'Không tìm thấy video');
+            } else if (platform === 'youtube') {
+                await fetchYoutubeAllWithProgressAndAppend(url);
+                setStatus(lastItems.length ? '' : 'Không tìm thấy video');
+            } else {
+                setStatus('Link không hợp lệ hoặc không hỗ trợ');
+            }
+        } catch (e) {
+            if (e && (e.name === 'AbortError' || e.message === 'The operation was aborted.')) {
+                setStatus('Đã dừng tải');
+            } else {
+                setStatus(e.message || 'Có lỗi xảy ra');
+            }
+        } finally {
+            elBtn.disabled = false;
+            elCancel.style.display = 'none';
+            currentAbort = null;
+        }
+    });
+
+    elClear.addEventListener('click', () => {
+        elUrl.value = '';
+        clearResults();
+    });
+
+    elCancel.addEventListener('click', () => {
+        try { currentAbort?.abort(); } catch {}
+    });
+
+    function toCsvValue(v) {
+        const s = (v ?? '').toString();
+        if (/[",\n\r]/.test(s)) {
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+        return s;
+    }
+
+    function exportToCsv(items) {
+        if (!items || !items.length) { setStatus('Chưa có dữ liệu để xuất'); return; }
+        const rows = [];
+        rows.push(['tên video','link']);
+        for (const it of items) {
+            const title = it.title || it.Title || '';
+            const url = it.url || it.Url || '';
+            rows.push([title, url]);
+        }
+        const bom = '\uFEFF';
+        const csv = rows.map(r => r.map(toCsvValue).join(',')).join('\r\n');
+        const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        const now = new Date();
+        const pad = n => n.toString().padStart(2, '0');
+        const dd = pad(now.getDate());
+        const MM = pad(now.getMonth() + 1);
+        const yyyy = now.getFullYear();
+        const HH = pad(now.getHours());
+        const mm = pad(now.getMinutes());
+        const ss = pad(now.getSeconds());
+        a.download = `dsvideo${dd}${MM}${yyyy}${HH}${mm}${ss}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    elExport.addEventListener('click', () => exportToCsv(lastItems));
+</script>
+
