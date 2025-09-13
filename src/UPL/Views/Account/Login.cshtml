@@ -1,0 +1,35 @@
+@model UPL.Models.Auth.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container" style="max-width:480px">
+    <h2 class="mb-4 mt-4">Đăng nhập</h2>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <form asp-action="Login" asp-controller="Account" method="post" class="needs-validation" novalidate>
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label asp-for="UserNameOrEmail" class="form-label"></label>
+            <input asp-for="UserNameOrEmail" class="form-control" autocomplete="username" />
+            <span asp-validation-for="UserNameOrEmail" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" class="form-control" autocomplete="current-password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input asp-for="RememberMe" class="form-check-input" />
+            <label asp-for="RememberMe" class="form-check-label"></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        <a class="btn btn-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
+    </form>
+</div>
+

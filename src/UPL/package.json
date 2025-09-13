@@ -17,6 +17,7 @@
     "bootstrap": "^5.3.3",
     "jquery": "^3.7.1",
     "jquery-validation": "^1.21.0",
-    "jquery-validation-unobtrusive": "^3.2.12"
+    "jquery-validation-unobtrusive": "^3.2.12",
+    "@fontsource/poppins": "^5.0.14"
   }
 }

@@ -38,8 +38,4 @@ body {
 .navbar-custom.navbar-scrolled { background-color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,.06); }
 .navbar-custom .brand-text { font-weight: 600; }
 .btn-signup { padding-inline: 14px; }
-/* Center brand on desktop */
-@media (min-width:1200px) {
-  .navbar-custom .container { position: relative; }
-  .navbar-custom .navbar-brand { position: absolute; left: 50%; transform: translateX(-50%); }
-}
+/* Note: brand is centered via grid in main.css; no absolute positioning here */

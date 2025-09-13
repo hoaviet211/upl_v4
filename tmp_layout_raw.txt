@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - UPL</title>
+    <link rel="stylesheet" href="~/dist/assets/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav id="mainNavbar" class="navbar navbar-expand-md navbar-light sticky-top navbar-custom">
+            <div class="container">
+                <!-- Mobile toggler -->
+                <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNavOffcanvas" aria-controls="mainNavOffcanvas" aria-label="Mở menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Brand centered (desktop) -->
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/upl-logo.svg" class="brand-logo" alt="UPL logo" />
+                </a>
+
+                <!-- Left items -->
+                <ul class="navbar-nav align-items-center d-none d-md-flex flex-row gap-4 me-auto nav-left">
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">KHÓA HỌC NĂNG LƯỢNG</a></li>
+                </ul>
+
+                <!-- Right items -->
+                <ul class="navbar-nav align-items-center d-none d-md-flex flex-row gap-4 ms-auto nav-right">
+                    <li class="nav-item"><a class="nav-link" href="#">KHÓA THIỀN</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">THƯ VIỆN</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">LIÊN HỆ</a></li>
+                    @if (!User.Identity?.IsAuthenticated ?? true)
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">ĐĂNG NHẬP</a></li>
+                        <li class="nav-item"><a class="btn btn-primary btn-signup" asp-area="" asp-controller="Account" asp-action="Register">ĐĂNG KÝ</a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @User.Identity?.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
+                                }
+                                @if (User.IsInRole("Staff"))
+                                {
+                                    <li><a class="dropdown-item" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+                                }
+                                @if (User.IsInRole("Student"))
+                                {
+                                    <li><a class="dropdown-item" asp-area="Student" asp-controller="Home" asp-action="Index">Trang học viên</a></li>
+                                }
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+
+                <!-- Offcanvas for mobile -->
+                <div class="offcanvas offcanvas-start d-md-none" tabindex="-1" id="mainNavOffcanvas" aria-labelledby="mainNavOffcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title d-flex align-items-center gap-2" id="mainNavOffcanvasLabel">
+                            <img src="~/images/upl-logo.svg" class="brand-logo" alt="UPL logo" />
+                            <span>Thiền UPL</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav flex-column gap-2">
+                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">HOME</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">KHÓA HỌC NĂNG LƯỢNG</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">KHÓA THIỀN</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">THƯ VIỆN</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">LIÊN HỆ</a></li>
+                            @if (!User.Identity?.IsAuthenticated ?? true)
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">ĐĂNG NHẬP</a></li>
+                                <li class="nav-item"><a class="btn btn-primary mt-2" asp-area="" asp-controller="Account" asp-action="Register">ĐĂNG KÝ</a></li>
+                            }
+                            else
+                            {
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
+                                }
+                                @if (User.IsInRole("Staff"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+                                }
+                                @if (User.IsInRole("Student"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Trang học viên</a></li>
+                                }
+                                <li class="nav-item"><a class="btn btn-outline-secondary mt-2" asp-area="" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container my-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top text-muted py-3">
+        <div class="container">
+            &copy; @DateTime.Now.Year - UPL
+        </div>
+    </footer>
+
+    <script type="module" src="~/dist/assets/main.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+

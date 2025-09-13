@@ -1,0 +1,11 @@
+﻿<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    jQuery.extend(jQuery.validator.messages, {
+        required: "Vui lÃ²ng nháº­p trÆ°á»ng nÃ y",
+        email: "Email khÃ´ng Ä‘Ãºng Ä‘á»‹nh dáº¡ng",
+        number: "Vui lÃ²ng nháº­p sá»‘ há»£p lá»‡",
+        maxlength: jQuery.validator.format("Tá»‘i Ä‘a {0} kÃ½ tá»±"),
+        minlength: jQuery.validator.format("Tá»‘i thiá»ƒu {0} kÃ½ tá»±")
+    });
+</script>

@@ -7,6 +7,7 @@ using UPL.Infrastructure.Repositories;
 using UPL.Infrastructure.Services;
 using UPL.Infrastructure.Services.Video;
 using UPL.Infrastructure.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,21 @@ builder.Services.AddHttpClient<ITikTokVideoProvider, TikTokVideoProvider>(c =>
 {
     c.Timeout = TimeSpan.FromSeconds(45);
 }).AddHttpMessageHandler<SimpleRetryHandler>();
+
+// Cookie Authentication (uses existing Users table)
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Denied";
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -96,6 +112,13 @@ app.Use(async (context, next) =>
 });
 
 app.UseRouting();
+
+// Serve files from wwwroot (e.g., Vite bundles under /dist)
+app.UseStaticFiles();
+
+// AuthN/AuthZ
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Static files
 app.MapStaticAssets();
