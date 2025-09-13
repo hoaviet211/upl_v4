@@ -367,10 +367,11 @@ public class TikTokVideoProvider : ITikTokVideoProvider
         return results;
     }
 
-    private static async Task InstallBrowsersIfNeededAsync()
+    private static Task InstallBrowsersIfNeededAsync()
     {
         // Try to ensure browsers are installed; ignore failures.
         try { Microsoft.Playwright.Program.Main(new[] { "install", "chromium" }); } catch { }
+        return Task.CompletedTask;
     }
 
     private async Task<string?> TryFetchOEmbedTitleAsync(string videoUrl, CancellationToken ct)
