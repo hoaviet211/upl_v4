@@ -1,0 +1,46 @@
+:root {
+  --nav-height: 64px;
+}
+
+/* Base layout */
+html, body { height: 100%; }
+body { display: flex; flex-direction: column; }
+
+/* Navbar */
+.navbar-custom {
+  background-color: transparent;
+  transition: background-color 180ms ease, box-shadow 180ms ease;
+  min-height: var(--nav-height);
+}
+.navbar-custom.navbar-scrolled {
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.navbar-custom .navbar-brand .fa-spa { color: #0d6efd; }
+.navbar-custom .brand-text { font-weight: 600; }
+
+/* Center brand on desktop (>=1200px) */
+@media (min-width: 1200px) {
+  .navbar-custom .container { position: relative; }
+  .navbar-custom .navbar-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Tablet (768–1199px): smaller brand */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .navbar-custom .navbar-brand { font-size: 0.95rem; }
+}
+
+/* Signup button emphasis */
+.btn-signup { padding-inline: 14px; }
+
+/* Footer */
+.footer .fa-spa { color: #198754; }
+.footer a:hover { color: #0d6efd !important; }
+
+/* Main content spacing */
+#content { min-height: 40vh; }
+
