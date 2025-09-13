@@ -29,3 +29,6 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+/* UPL brand logo sizing */
+.navbar .brand-logo{height:34px;width:auto;display:block}
+@media (min-width:1200px){.navbar .brand-logo{height:40px}}

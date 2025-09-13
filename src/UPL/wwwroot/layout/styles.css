@@ -16,7 +16,7 @@ body { display: flex; flex-direction: column; }
   background-color: #ffffff;
   box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
-.navbar-custom .navbar-brand .fa-spa { color: #0d6efd; }
+.navbar-custom .navbar-brand .brand-logo { height: 36px; width: auto; }
 .navbar-custom .brand-text { font-weight: 600; }
 
 /* Center brand on desktop (>=1200px) */
@@ -44,3 +44,5 @@ body { display: flex; flex-direction: column; }
 /* Main content spacing */
 #content { min-height: 40vh; }
 
+
+@media (min-width: 1200px) { .navbar-custom .navbar-brand .brand-logo { height: 44px; } }
