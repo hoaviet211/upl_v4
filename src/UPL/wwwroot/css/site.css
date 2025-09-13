@@ -32,3 +32,14 @@ body {
 /* UPL brand logo sizing */
 .navbar .brand-logo{height:34px;width:auto;display:block}
 @media (min-width:1200px){.navbar .brand-logo{height:40px}}
+/* Navbar (role-aware) common styles */
+:root { --nav-height: 64px; }
+.navbar-custom { background-color: transparent; transition: background-color .18s ease, box-shadow .18s ease; min-height: var(--nav-height); }
+.navbar-custom.navbar-scrolled { background-color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+.navbar-custom .brand-text { font-weight: 600; }
+.btn-signup { padding-inline: 14px; }
+/* Center brand on desktop */
+@media (min-width:1200px) {
+  .navbar-custom .container { position: relative; }
+  .navbar-custom .navbar-brand { position: absolute; left: 50%; transform: translateX(-50%); }
+}

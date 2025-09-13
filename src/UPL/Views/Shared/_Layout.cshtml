@@ -9,23 +9,100 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav id="mainNavbar" class="navbar navbar-expand-md navbar-light sticky-top navbar-custom">
             <div class="container">
+                <!-- Toggler (mobile) -->
+                <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNavOffcanvas" aria-controls="mainNavOffcanvas" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Brand / Logo -->
                 <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/images/upl-logo.png" class="brand-logo" alt="UPL logo" />
                     <span class="fw-semibold">UPL</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="mainNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" asp-area="Public" asp-controller="Home" asp-action="Index">Public</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Học viên</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Nhân viên</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Quản trị</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Videos">report social</a></li>
-                    </ul>
+
+                <!-- Desktop/Tablet Navs (>= md) -->
+                <ul class="navbar-nav align-items-center d-none d-md-flex flex-row gap-3 me-auto nav-left">
+                    <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">KHÓA HỌC NĂNG LƯỢNG</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">KHÓA THIỀN</a></li>
+                </ul>
+
+                <ul class="navbar-nav align-items-center d-none d-md-flex flex-row gap-3 ms-auto nav-right">
+                    <li class="nav-item"><a class="nav-link" href="#">THƯ VIỆN</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">LIÊN HỆ</a></li>
+                    @if (!User.Identity?.IsAuthenticated ?? true)
+                    {
+                        <li class="nav-item"><a class="nav-link" href="#">ĐĂNG NHẬP</a></li>
+                        <li class="nav-item"><a class="btn btn-primary btn-signup" href="#">ĐĂNG KÝ</a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @User.Identity?.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                @* Example role-gated links *@
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
+                                }
+                                @if (User.IsInRole("Staff"))
+                                {
+                                    <li><a class="dropdown-item" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+                                }
+                                @if (User.IsInRole("Student"))
+                                {
+                                    <li><a class="dropdown-item" asp-area="Student" asp-controller="Home" asp-action="Index">Trang học viên</a></li>
+                                }
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="#">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+
+                <!-- Offcanvas (Mobile) -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="mainNavOffcanvas" aria-labelledby="mainNavOffcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title d-flex align-items-center gap-2" id="mainNavOffcanvasLabel">
+                            <img src="~/images/upl-logo.png" class="brand-logo" alt="UPL logo" />
+                            <span>Thiền UPL</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav flex-column gap-2">
+                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">HOME</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">KHÓA HỌC NĂNG LƯỢNG</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">KHÓA THIỀN</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">THƯ VIỆN</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#">LIÊN HỆ</a></li>
+                            @if (!User.Identity?.IsAuthenticated ?? true)
+                            {
+                                <li class="nav-item"><a class="nav-link" href="#">ĐĂNG NHẬP</a></li>
+                                <li class="nav-item mt-2"><a class="btn btn-primary w-100" href="#">ĐĂNG KÝ</a></li>
+                            }
+                            else
+                            {
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
+                                }
+                                @if (User.IsInRole("Staff"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+                                }
+                                @if (User.IsInRole("Student"))
+                                {
+                                    <li class="nav-item"><a class="nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Trang học viên</a></li>
+                                }
+                                <li class="nav-item mt-2"><a class="btn btn-outline-secondary w-100" href="#">Đăng xuất</a></li>
+                            }
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -43,6 +120,7 @@
     </footer>
 
     <script type="module" src="~/dist/assets/main.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
