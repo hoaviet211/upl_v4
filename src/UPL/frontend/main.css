@@ -1,0 +1,12 @@
+/* Base layout tweaks */
+body { 
+  min-height: 100vh; 
+  display: flex; 
+  flex-direction: column; 
+}
+main[role="main"] { flex: 1 0 auto; }
+footer { flex-shrink: 0; }
+
+/* Example utility override */
+.brand-icon { margin-right: .5rem; }
+

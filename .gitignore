@@ -1,10 +1,60 @@
-bin/
-obj/
+## .NET / Visual Studio
+**/bin/
+**/obj/
 .vs/
-.idea/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.userprefs
+*.DotSettings.user
+_ReSharper*/
+*.ReSharper
+*.ncrunch*
+TestResult*/
+*.trx
+*.coverage
+*.coveragexml
+BenchmarkDotNet.Artifacts/
+artifacts/
+
+## JetBrains Rider / IntelliJ
+.idea/
+
+## VS Code
+.vscode/
+
+## Common build config
+Debug/
+Release/
+x64/
+x86/
+
+## ASP.NET static libs (LibMan/Bower)
+**/wwwroot/lib/
+
+## Node / frontend
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+## Logs, caches, misc
+*.log
 *.swp
 *.DS_Store
-src/UPL/wwwroot/lib/
+Thumbs.db
+Desktop.ini
+
+## Environment & local settings
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example
+!.env.*.example
+
+## Appsettings local overrides
 **/appsettings.*.local.json

@@ -1,28 +1,22 @@
 UPL — Skeleton (ASP.NET Core MVC, .NET 9)
 
-Tài liệu đầy đủ xem tại `README.md` ở thư mục gốc của repo.
+For full instructions, see the root `README.md`.
 
-Thiết lập nhanh (Development)
+Quick dev setup:
 
-- dotnet restore
-- dotnet tool install --global dotnet-ef (nếu chưa có)
-- dotnet ef database update (đã có migration: InitialCreate)
-- dotnet run
+- `dotnet restore`
+- (optional) `dotnet tool install --global dotnet-ef`
+- `dotnet ef database update`
+- `dotnet run`
 
-Ghi chú
+Notes:
 
-- Văn hóa mặc định: vi-VN. Thời gian lưu UTC; hiển thị theo Asia/Ho_Chi_Minh.
-- Đây là skeleton: chưa có auth flow đầy đủ, caching hay nghiệp vụ phức tạp.
+- Default culture: `vi-VN` (data stored UTC; display localized).
+- Seed accounts: `admin@gmail.com` / `testing`, `tam@gmail.com` / `testing`.
 
-Tài khoản seed
+Structure:
 
-- Admin: admin@gmail.com / testing
-- Student: tam@gmail.com / testing
-
-Structure
-
-- Areas: Public, Student, Staff, Admin.
-- Data: DbContext + Fluent API configurations (mỗi entity một file).
-- Domain: Entities + Enums.
-- Infrastructure: Generic repository + sample services.
-
+- Areas: Public, Student, Staff, Admin
+- Data: DbContext + EF Core migrations
+- Domain: Entities + Enums
+- Infrastructure: Generic repository + sample services

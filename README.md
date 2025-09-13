@@ -1,102 +1,108 @@
 # UPL v4 — ASP.NET Core MVC (.NET 9)
 
-Mẫu (skeleton) dự án ASP.NET Core MVC với phân tách theo Areas, dùng Entity Framework Core (SQL Server) và cấu hình sẵn nội địa hóa `vi-VN`. Dự án nhằm giúp khởi tạo nhanh một ứng dụng quản trị/nội dung cơ bản cho UPL.
+Starter skeleton for an ASP.NET Core MVC app split by Areas, using Entity Framework Core (SQL Server) and Vietnamese localization by default (`vi-VN`). Includes a simple repository/service layer, Vite-based frontend bundling, and seed data to get you moving quickly.
 
-## Yêu cầu
+## Requirements
 
 - .NET SDK 9.0
-- SQL Server (Express/Developer hoặc bản cài trên máy). Chuỗi kết nối mặc định: `Server=.;Database=UPL;Trusted_Connection=True;TrustServerCertificate=True` (sử dụng Windows Authentication).
-- Redis (tùy chọn): `localhost:6379` đã cấu hình sẵn nhưng chưa sử dụng trong business logic.
+- SQL Server (local or remote)
+- Node.js 18+ (for building frontend assets with Vite)
+- Docker Desktop/Engine (optional, for Docker Compose workflow)
 
-## Cấu hình
+## Quick Start (Development)
 
-- Sửa chuỗi kết nối trong `src/UPL/appsettings.json` hoặc đặt biến môi trường `ConnectionStrings__Default` khi chạy/triển khai.
-- Thiết lập riêng môi trường phát triển trong `src/UPL/appsettings.Development.json`.
+1) Backend
 
-## Thiết lập & chạy (Development)
-
-```bash
+```
 cd src/UPL
 dotnet restore
-dotnet tool install --global dotnet-ef   # nếu chưa có
-dotnet ef database update                # áp dụng migration có sẵn (InitialCreate)
-dotnet run
+# If you don't have EF tools: dotnet tool install --global dotnet-ef
+dotnet ef database update   # applies existing migrations
+dotnet run                  # launches on http://localhost:5070
 ```
 
-Hoặc sử dụng script tiện ích trên Windows PowerShell:
+2) Frontend assets (Vite → wwwroot/dist)
 
-- `scripts/run_dev.ps1` — chuyển thư mục sang `src/UPL` và chạy `dotnet run`.
-- `scripts/migrate_dev.ps1` — thêm migration mới và `database update` (điều chỉnh tên migration trong script nếu cần).
+```
+cd src/UPL
+npm ci
+npm run build               # outputs to wwwroot/dist
+```
 
-## Tài khoản mẫu (seed)
+Convenience scripts (PowerShell):
+
+- `scripts/run_dev.ps1` → `cd src/UPL && dotnet run`
+- `scripts/migrate_dev.ps1` → add a migration + update database
+
+## Seed Accounts
 
 - Admin: `admin@gmail.com` / `testing`
 - Student: `tam@gmail.com` / `testing`
 
 ## Build & Publish (Production)
 
-```bash
+```
 cd src/UPL
 dotnet build -c Release
 dotnet publish -c Release -o ./publish
 ```
 
-Biến môi trường khuyến nghị khi triển khai:
+Recommended environment variables:
 
 - `ASPNETCORE_ENVIRONMENT=Production`
-- `ConnectionStrings__Default` — chuỗi kết nối SQL Server của môi trường chạy.
-- `Redis__Configuration` — cấu hình Redis nếu sử dụng cache.
+- `ConnectionStrings__Default` → SQL Server connection string
 
-Chạy thực thi đã publish (ví dụ trên Windows):
+Run the published app (Windows example):
 
-```bash
+```
 ./publish/UPL.exe
 ```
 
-## Docker (Portable)
+## Docker
 
-- Yêu cầu: Docker Desktop (Windows/macOS) hoặc Docker Engine (Linux).
+Uses `docker-compose.yml` with two services: `db` (SQL Server) and `web` (ASP.NET Core).
 
-Chạy nhanh bằng Docker Compose:
+Quick start:
 
-```bash
+```
 docker compose up -d --build
-# app: http://localhost:8080
+# Web: http://localhost:8080
 ```
 
-Tùy chỉnh cổng/mật khẩu DB bằng `.env` (tạo từ `.env.example`):
+Customise ports and SA password via `.env` (see `.env.example`):
 
-```bash
-cp .env.example .env    # Windows dùng copy
-# chỉnh SA_PASSWORD, WEB_PORT, DB_PORT nếu cần
+```
+copy .env.example .env   # Windows
+# edit SA_PASSWORD, WEB_PORT, DB_PORT if needed
 docker compose up -d --build
 ```
 
-Lệnh tiện ích:
+Helper scripts:
 
-- `scripts/docker_up.ps1` — build & start
-- `scripts/docker_down.ps1` — stop & remove
-- `scripts/docker_logs.ps1` — xem log
+- `scripts/docker_up.ps1` → build & start
+- `scripts/docker_down.ps1` → stop & remove
+- `scripts/docker_logs.ps1` → follow logs
 
-Ghi chú:
+Notes:
 
-- Biến `AUTO_MIGRATE=true` giúp app tự `Database.Migrate()` khi khởi động trong container.
-- Chuỗi kết nối được cấp qua env `ConnectionStrings__Default` trong `docker-compose.yml`.
-- Dữ liệu SQL lưu ở volume `mssql-data` (không mất khi restart). Xóa hẳn: `docker compose down -v`.
+- Set `AUTO_MIGRATE=true` to run `Database.Migrate()` on startup inside the container.
+- `ConnectionStrings__Default` is passed to the app from `docker-compose.yml`.
+- SQL data persists in the `mssql-data` volume. Remove with `docker compose down -v`.
 
-## Cấu trúc chính
+## Project Structure
 
-- `src/UPL` — ứng dụng web (ASP.NET Core MVC).
-- Areas: `Public`, `Student`, `Staff`, `Admin`.
-- `Data`: `UplDbContext`, `Migrations`, Fluent API configurations (mỗi entity một file).
-- `Domain`: Entities, Enums.
-- `Infrastructure`: Generic repository + services mẫu (Course/Programme/Category).
-- `Common`: tiện ích dùng chung (ví dụ `LocalizationExtensions`).
+- `src/UPL` → ASP.NET Core MVC web app
+- Areas: `Public`, `Student`, `Staff`, `Admin`
+- `Data`: `UplDbContext`, `Migrations`, EF Core configurations
+- `Domain`: Entities, Enums
+- `Infrastructure`: Generic repository + sample services
+- `Common`: Shared helpers (incl. localization)
 
-## Nội địa hóa & thời gian
+## Localization & Time
 
-- Mặc định văn hóa `vi-VN`. Dữ liệu thời gian lưu theo UTC, hiển thị theo múi giờ Việt Nam (Asia/Ho_Chi_Minh) ở tầng UI.
+- Default culture is `vi-VN`. Data is stored in UTC and displayed using the Vietnamese locale in the UI.
 
----
+## License
 
-Góp ý/điều chỉnh hãy tạo PR hoặc issue trong repo.
+MIT — see `LICENSE`.
+
