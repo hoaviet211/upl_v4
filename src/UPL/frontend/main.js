@@ -4,7 +4,11 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 import './main.css'
 
 // JS (includes Popper via bootstrap bundle)
-import 'bootstrap'
+import * as bootstrap from 'bootstrap'
+// Expose Bootstrap namespace globally for legacy scripts
+if (typeof window !== 'undefined' && !window.bootstrap) {
+  window.bootstrap = bootstrap
+}
 
 // jQuery + Validation (bundled via npm)
 import jQuery from 'jquery'
@@ -32,7 +36,7 @@ if (window.jQuery && window.jQuery.validator) {
 document.addEventListener('DOMContentLoaded', () => {
   // Example: enable all tooltips if present
   const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  tooltipTriggerList.forEach((el) => new window.bootstrap.Tooltip(el))
+  tooltipTriggerList.forEach((el) => new bootstrap.Tooltip(el))
   // Navbar scroll state
   const nav = document.getElementById('mainNavbar')
   const onScroll = () => {
@@ -45,20 +49,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Sidebar toggling: on lg+ collapse/expand left pane, on <lg use offcanvas
   const toggler = document.getElementById('sidebarToggle')
-  const layoutShell = document.querySelector('.layout-shell')
-  const isLgUp = () => window.matchMedia('(min-width: 992px)').matches
-  if (toggler && layoutShell) {
-    try { toggler.setAttribute('aria-expanded', 'true') } catch {}
-    toggler.addEventListener('click', (e) => {
-      if (isLgUp()) {
-        // Desktop/Tablet: collapse only the left sidebar column (no page overlay)
-        const collapsed = layoutShell.classList.toggle('sidebar-collapsed')
-        toggler.setAttribute('aria-expanded', (!collapsed).toString())
-      } else {
-        // Mobile: open Bootstrap Offcanvas programmatically
-        const oc = window.bootstrap.Offcanvas.getOrCreateInstance('#sideNav', { scroll: true, backdrop: true })
-        oc.toggle()
-      }
+  const sideNav = document.getElementById('sideNav')
+  if (toggler && sideNav) {
+    const updateExpanded = (state) => {
+      try { toggler.setAttribute('aria-expanded', state) } catch {}
+    }
+    updateExpanded('false')
+    toggler.addEventListener('click', () => {
+      if (!bootstrap.Offcanvas) return
+      const oc = bootstrap.Offcanvas.getOrCreateInstance(sideNav, { scroll: true, backdrop: true })
+      oc.toggle()
     })
+    sideNav.addEventListener('shown.bs.offcanvas', () => updateExpanded('true'))
+    sideNav.addEventListener('hidden.bs.offcanvas', () => updateExpanded('false'))
   }
 })
+
+
+
+
+
+

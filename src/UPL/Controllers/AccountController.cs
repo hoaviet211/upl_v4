@@ -37,11 +37,12 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var normalized = model.UserNameOrEmail.Trim().ToLowerInvariant();
+        var lookupEmail = model.UserNameOrEmail.Trim();
         var user = await _db.Users
+            .AsSplitQuery()
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
-            .FirstOrDefaultAsync(u => u.Email.ToLower() == normalized);
+            .FirstOrDefaultAsync(u => EF.Functions.Collate(u.Email, "SQL_Latin1_General_CP1_CI_AS") == lookupEmail);
 
         // Tránh lộ thông tin: luôn trả về cùng một thông báo lỗi cho mọi trường hợp sai
         if (user == null || !user.IsActive)

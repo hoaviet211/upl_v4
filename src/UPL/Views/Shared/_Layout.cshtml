@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
@@ -8,76 +8,236 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav id="mainNavbar" class="navbar navbar-light sticky-top navbar-custom">
-            <div class="container d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                    <button id="sidebarToggle" class="navbar-toggler" type="button" aria-controls="sideNav" aria-expanded="true" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/images/upl-logo.svg" class="brand-logo" alt="UPL logo" />
-                        <span class="ms-2 fw-semibold">UPL</span>
-                    </a>
+        <header>
+        <nav id="mainNavbar" class="navbar navbar-light sticky-top navbar-custom header-bar">
+
+            <div class="container header-content">
+
+                <div class="header-left d-flex align-items-center gap-3">
+
+                    <div class="header-brand d-flex align-items-center gap-2">
+
+                        <button id="sidebarToggle" class="navbar-toggler d-lg-none" type="button" aria-controls="sideNav" aria-expanded="false" aria-label="Toggle navigation">
+
+                            <span class="navbar-toggler-icon"></span>
+
+                        </button>
+
+                        <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+
+                            <img src="~/images/upl-logo.svg" class="brand-logo" alt="UPL logo" />
+
+                            <span class="brand-text fw-semibold text-uppercase">UPL</span>
+
+                        </a>
+
+                    </div>
+
+                    <ul class="header-nav list-unstyled d-flex align-items-center gap-3 mb-0">
+
+                        <li><a class="nav-link" href="/khoa-nang-luong">Khóa học năng lượng</a></li>
+
+                        <li><a class="nav-link" href="/khoa-thien">Khóa thiền</a></li>
+
+                        <li><a class="nav-link" href="/thu-vien">Thư viện</a></li>
+
+                        <li><a class="nav-link" href="/lien-he">Liên hệ</a></li>
+
+                    </ul>
+
                 </div>
-                <ul class="navbar-nav ms-auto align-items-center gap-3 flex-row">
-                    @if (!User.Identity?.IsAuthenticated ?? true)
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
-                        <li class="nav-item"><a class="btn btn-primary btn-signup" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký</a></li>
-                    }
-                    else
-                    {
-                        <li class="nav-item dropdown">
-                            <button class="nav-link dropdown-toggle account-toggle btn btn-link p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                @User.Identity?.Name
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
-                                }
-                                @if (User.IsInRole("Staff"))
-                                {
-                                    <li><a class="dropdown-item" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
-                                }
-                                @if (User.IsInRole("Student"))
-                                {
-                                    <li><a class="dropdown-item" asp-area="Student" asp-controller="Home" asp-action="Index">Trang học viên</a></li>
-                                }
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
-                            </ul>
-                        </li>
-                    }
-                </ul>
+
+                <div class="header-right d-flex align-items-center gap-3">
+
+                    <ul class="header-menu list-unstyled d-flex align-items-center gap-3 mb-0">
+
+                        <li><a class="nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Học viên</a></li>
+
+                        <li><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Nhân viên</a></li>
+
+                        @if (!User.Identity?.IsAuthenticated ?? true)
+
+                        {
+
+                            <li><a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
+
+                            <li><a class="btn btn-primary header-cta" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký</a></li>
+
+                        }
+
+                        else
+
+                        {
+
+                            <li class="nav-item dropdown">
+
+                                <button class="nav-link dropdown-toggle account-toggle btn btn-link p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                    @User.Identity?.Name
+
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end">
+
+                                    @if (User.IsInRole("Admin"))
+
+                                    {
+
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
+
+                                    }
+
+                                    @if (User.IsInRole("Staff"))
+
+                                    {
+
+                                        <li><a class="dropdown-item" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+
+                                    }
+
+                                    @if (User.IsInRole("Student"))
+
+                                    {
+
+                                        <li><a class="dropdown-item" asp-area="Student" asp-controller="Home" asp-action="Index">Trang học viên</a></li>
+
+                                    }
+
+                                    <li><hr class="dropdown-divider" /></li>
+
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+
+                                </ul>
+
+                            </li>
+
+                        }
+
+                    </ul>
+
+                </div>
+
             </div>
+
         </nav>
+
+
     </header>
 
     <div class="container-xl my-3 layout-shell" id="layoutShell">
-        <div id="sideNav" class="offcanvas offcanvas-start offcanvas-lg" tabindex="-1" aria-labelledby="sideNavLabel" data-bs-scroll="true">
-            <div class="offcanvas-header d-lg-none">
-                <h5 class="offcanvas-title" id="sideNavLabel">Menu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
-            </div>
-            <div class="offcanvas-body">
-                @await Html.PartialAsync("_GuideNav")
-            </div>
-        </div>
-        <main role="main" class="pb-3">
+        <div id="sideNav" class="offcanvas offcanvas-start" tabindex="-1" aria-labelledby="sideNavLabel" data-bs-scroll="true">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="sideNavLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+            </div>
+            <div class="offcanvas-body">
+                <nav class="mobile-nav">
+                    <ul class="list-unstyled mobile-nav-list">
+                        <li><a class="mobile-nav-link" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li><a class="mobile-nav-link" href="/khoa-nang-luong">Khóa học năng lượng</a></li>
+                        <li><a class="mobile-nav-link" href="/khoa-thien">Khóa thiền</a></li>
+                        <li><a class="mobile-nav-link" href="/thu-vien">Thư viện</a></li>
+                        <li><a class="mobile-nav-link" href="/lien-he">Liên hệ</a></li>
+                    </ul>
+                    <hr class="mobile-nav-divider" />
+                    <ul class="list-unstyled mobile-nav-actions">
+                        <li><a class="mobile-nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Học viên</a></li>
+                        <li><a class="mobile-nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Nhân viên</a></li>
+                        @if (!User.Identity?.IsAuthenticated ?? true)
+                        {
+                            <li><a class="mobile-nav-link" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
+                            <li><a class="mobile-nav-link mobile-nav-highlight" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký</a></li>
+                        }
+                        else
+                        {
+                            <li><span class="mobile-nav-user">@User.Identity?.Name</span></li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li><a class="mobile-nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
+                            }
+                            @if (User.IsInRole("Staff"))
+                            {
+                                <li><a class="mobile-nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+                            }
+                            @if (User.IsInRole("Student"))
+                            {
+                                <li><a class="mobile-nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Trang học viên</a></li>
+                            }
+                            <li><a class="mobile-nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+<main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top text-muted py-3">
+    <footer class="footer-dark mt-5 pt-5">
         <div class="container">
-            &copy; @DateTime.Now.Year - UPL
+            <div class="row g-4 align-items-start">
+                <div class="col-12 col-lg-3">
+                    <img src="~/images/upl-logo.svg" class="footer-logo mb-3" alt="UPL logo" />
+                    <h5 class="footer-title text-uppercase mb-3">UPL – VIỆN NGHIÊN CỨU KHOA HỌC & ỨNG DỤNG NĂNG LƯỢNG VÀO ĐỜI SỐNG</h5>
+                    <p class="mb-1">Số 101, Đường N2, Khu DC X28, KP6, P. Long Bình, Biên Hoà, Tỉnh Đồng Nai</p>
+                    <p class="mb-3">Email: <a href="mailto:info@uplglobal.vn">info@uplglobal.vn</a></p>
+                    <div class="footer-social d-flex gap-3">
+                        <a href="https://www.facebook.com/uplglobal.vn" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.youtube.com/@@uplglobal" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/uplglobal.vn" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@@uplglobal" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <h6 class="text-uppercase text-white-50 mb-3">Phòng Đào Tạo</h6>
+                    <ul class="list-unstyled footer-contact">
+                        <li><i class="fas fa-phone"></i><a href="tel:+84966263046">(+84) 966 263 046</a></li>
+                        <li><i class="fas fa-phone"></i><a href="tel:+84946641146">(+84) 946 641 146</a></li>
+                    </ul>
+                    <h6 class="text-uppercase text-white-50 mt-4 mb-3">Liên hệ</h6>
+                    <ul class="list-unstyled footer-contact">
+                        <li><i class="fas fa-envelope"></i><a href="mailto:tuvan@uplglobal.vn">tuvan@uplglobal.vn</a></li>
+                        <li><i class="fas fa-globe"></i><a href="https://uplglobal.vn" target="_blank" rel="noopener">uplglobal.vn</a></li>
+                    </ul>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <h6 class="text-uppercase text-white-50 mb-3">Liên kết nhanh</h6>
+                    <ul class="footer-links">
+                        <li><a href="/gioi-thieu">Giới thiệu</a></li>
+                        <li><a href="/khoa-nang-luong">Các Khóa Năng Lượng</a></li>
+                        <li><a href="/khoa-thien">Các Khóa Thiền</a></li>
+                        <li><a href="/tin-tuc">Tin tức</a></li>
+                    </ul>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <h6 class="text-uppercase text-white-50 mb-3">Kết nối Facebook</h6>
+                    <div class="footer-fb">
+                        <div class="fb-page" data-href="https://www.facebook.com/uplglobal.vn" data-tabs="timeline" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                            <blockquote cite="https://www.facebook.com/uplglobal.vn" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/uplglobal.vn">UPL - Viện Nghiên Cứu Khoa Học & Ứng Dụng Năng Lượng vào Đời Sống</a></blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="footer-divider my-4" />
+            <div class="footer-meta small">
+                <p class="mb-2">&copy; VIỆN NGHIÊN CỨU KHOA HỌC & ỨNG DỤNG NĂNG LƯỢNG VÀO ĐỜI SỐNG (UPL) – Giấy phép kinh doanh số: 0315256654, Ngày cấp giấy phép: 05/09/2019</p>
+                <p class="mb-2">Trụ Sở Chính Tại: Số 101, Đường N2, Khu DC X28, KP6, P. Long Bình, Biên Hoà, Tỉnh Đồng Nai, Điện thoại: 0935 349 195</p>
+                <p class="mb-0">Trung Tâm Thiền Tuệ Vipassana (U.P.L.A) – Địa chỉ: Số 02, tổ 12, ấp 2, xã An Phước, huyện Long Thành, tỉnh Đồng Nai.</p>
+            </div>
         </div>
     </footer>
 
     <script type="module" src="~/dist/assets/main.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v19.0" nonce="uplFooter"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+
+
+
+

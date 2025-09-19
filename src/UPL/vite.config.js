@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 
 // Build directly into ASP.NET Core wwwroot for easy serving
 export default defineConfig({
+  base: '/dist/',
   root: '.',
   publicDir: false,
   build: {
@@ -28,4 +29,3 @@ export default defineConfig({
     strictPort: true
   }
 })
-
