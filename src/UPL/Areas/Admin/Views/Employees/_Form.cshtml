@@ -1,0 +1,142 @@
+@using System
+@using System.Linq
+@model EmployeeFormViewModel
+
+@{ var summaryClass = ViewData.ModelState.ErrorCount == 0 ? "alert alert-danger mb-4 d-none" : "alert alert-danger mb-4"; }
+<div class="card admin-card">
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="@summaryClass" role="alert"></div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="FullName" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.FullName)</span>
+                <span class="text-danger">*</span>
+            </label>
+            <div class="col-12 col-lg-8">
+                <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+                <div class="form-hint">Không nhập thẻ HTML</div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="Email" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.Email)</span>
+                <span class="text-danger">*</span>
+            </label>
+            <div class="col-12 col-lg-8">
+                <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <div class="form-hint">Không nhập thẻ HTML</div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label class="col-12 col-lg-4 col-form-label fw-semibold">Trạng thái</label>
+            <div class="col-12 col-lg-8 d-flex align-items-center gap-3">
+                <div class="form-check form-switch">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label class="form-check-label" for="IsActive">Kích hoạt tài khoản</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="Password" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.Password)</span>
+                @if (!Model.IsEdit)
+                {
+                    <span class="text-danger">*</span>
+                }
+            </label>
+            <div class="col-12 col-lg-8">
+                <input asp-for="Password" class="form-control" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <div class="form-hint">Không nhập thẻ HTML</div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="ConfirmPassword" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.ConfirmPassword)</span>
+                @if (!Model.IsEdit)
+                {
+                    <span class="text-danger">*</span>
+                }
+            </label>
+            <div class="col-12 col-lg-8">
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label class="col-12 col-lg-4 col-form-label fw-semibold">Roles<span class="text-danger">*</span></label>
+            <div class="col-12 col-lg-8">
+                <div class="row g-3 row-cols-1 row-cols-md-2">
+                    @foreach (var role in Model.RoleOptions)
+                    {
+                        var checkboxId = $"role_{role.Name.GetHashCode()}";
+                        var isSelected = Model.SelectedRoles != null && Model.SelectedRoles.Any(r => string.Equals(r, role.Name, StringComparison.OrdinalIgnoreCase));
+                        <div class="col">
+                            <div class="form-check admin-role-option">
+                                <input class="form-check-input" type="checkbox" name="SelectedRoles" value="@role.Name" id="@checkboxId" @(isSelected ? "checked" : string.Empty) />
+                                <label class="form-check-label" for="@checkboxId">@role.DisplayName</label>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <span asp-validation-for="SelectedRoles" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="Phone" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.Phone)</span>
+            </label>
+            <div class="col-12 col-lg-8">
+                <input asp-for="Phone" class="form-control" placeholder="Ví dụ: 0909 000 000" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+                <div class="form-hint">Không nhập thẻ HTML</div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="ZaloNumber" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.ZaloNumber)</span>
+            </label>
+            <div class="col-12 col-lg-8">
+                <input asp-for="ZaloNumber" class="form-control" placeholder="Số Zalo" />
+                <span asp-validation-for="ZaloNumber" class="text-danger"></span>
+                <div class="form-hint">Không nhập thẻ HTML</div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="Position" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.Position)</span>
+            </label>
+            <div class="col-12 col-lg-8">
+                <input asp-for="Position" class="form-control" placeholder="Ví dụ: Điều phối lớp" />
+                <span asp-validation-for="Position" class="text-danger"></span>
+                <div class="form-hint">Không nhập thẻ HTML</div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start form-row">
+            <label asp-for="Note" class="col-12 col-lg-4 col-form-label fw-semibold">
+                <span class="field-label">@Html.DisplayNameFor(m => m.Note)</span>
+            </label>
+            <div class="col-12 col-lg-8">
+                <textarea asp-for="Note" rows="4" class="form-control" placeholder="Ghi chú nội bộ"></textarea>
+                <span asp-validation-for="Note" class="text-danger"></span>
+                <div class="form-hint">Không nhập thẻ HTML</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-column flex-md-row justify-content-between gap-3 mt-4">
+    <a asp-action="Index" class="btn btn-outline-secondary w-100 w-md-auto">Hủy bỏ</a>
+    <button type="submit" class="btn btn-primary w-100 w-md-auto">Lưu</button>
+</div>

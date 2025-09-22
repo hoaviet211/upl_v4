@@ -1,0 +1,22 @@
+@model EmployeeFormViewModel
+@{
+    ViewData["Title"] = "Thêm thành viên";
+}
+
+<section class="page-heading">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+        <div>
+            <h1 class="page-title">Thêm thành viên</h1>
+            <p class="text-muted mb-0">Nhập thông tin cơ bản và phân quyền cho thành viên mới.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+    </div>
+</section>
+
+<form asp-action="Create" method="post" class="admin-form" novalidate>
+    <partial name="_Form" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

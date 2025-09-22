@@ -50,7 +50,7 @@
                                 }
                                 @if (User.IsInRole("Staff"))
                                 {
-                                    <li><a class="dropdown-item" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+                                    <li><a class="dropdown-item" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang thành viên</a></li>
                                 }
                                 @if (User.IsInRole("Student"))
                                 {
@@ -92,7 +92,7 @@
                                 }
                                 @if (User.IsInRole("Staff"))
                                 {
-                                    <li class="nav-item"><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang nhân viên</a></li>
+                                    <li class="nav-item"><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang thanh viên</a></li>
                                 }
                                 @if (User.IsInRole("Student"))
                                 {
