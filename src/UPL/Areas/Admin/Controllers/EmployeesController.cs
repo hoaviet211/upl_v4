@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using UPL.Common;
 using UPL.Data;
 using UPL.Domain.Entities;
 using UPL.Models.Admin.Employees;
@@ -16,20 +17,8 @@ namespace UPL.Areas.Admin.Controllers;
 [Authorize(Roles = "Admin")]
 public class EmployeesController : Controller
 {
-    private static readonly string[] StaffRoleNames =
-    {
-        "Trưởng phòng tư vấn",
-        "Phòng tư vấn",
-        "Điều phối lớp",
-        "Hỗ trợ điều phối",
-        "Trưởng phòng đào tạo",
-        "Phòng đào tạo",
-        "Giám đốc",
-        "Admin"
-    };
-
-    private static readonly string[] AllExpectedRoleNames = StaffRoleNames
-        .Concat(new[] { "Học viên" })
+    private static readonly string[] AllExpectedRoleNames = StaffRoleHelper.Roles
+        .Concat(new[] { RoleConstants.Student })
         .Distinct(StringComparer.OrdinalIgnoreCase)
         .ToArray();
 
@@ -48,7 +37,7 @@ public class EmployeesController : Controller
     {
         await EnsureRolesAsync();
 
-        var staffRoleSet = new HashSet<string>(StaffRoleNames, StringComparer.OrdinalIgnoreCase);
+        var staffRoleSet = StaffRoleHelper.CreateRoleSet();
 
         var query = _db.Users
             .AsNoTracking()
@@ -177,7 +166,7 @@ public class EmployeesController : Controller
     public async Task<IActionResult> Edit(int id)
     {
         await EnsureRolesAsync();
-        var staffRoleSet = new HashSet<string>(StaffRoleNames, StringComparer.OrdinalIgnoreCase);
+        var staffRoleSet = StaffRoleHelper.CreateRoleSet();
 
         var user = await _db.Users
             .AsSplitQuery()
@@ -337,7 +326,7 @@ public class EmployeesController : Controller
     private async Task UpdateRolesAsync(User user, IEnumerable<string>? selectedRoles)
     {
         var targetRoles = new HashSet<string>(selectedRoles ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
-        var employeeRoleSet = new HashSet<string>(StaffRoleNames, StringComparer.OrdinalIgnoreCase);
+        var employeeRoleSet = StaffRoleHelper.CreateRoleSet();
 
         var toRemove = user.UserRoles
             .Where(ur => employeeRoleSet.Contains(ur.Role.Name) && !targetRoles.Contains(ur.Role.Name))
@@ -383,7 +372,7 @@ public class EmployeesController : Controller
 
     private async Task<IReadOnlyList<EmployeeRoleOption>> GetRoleOptionsAsync(HashSet<string>? employeeRoleSet = null)
     {
-        employeeRoleSet ??= new HashSet<string>(StaffRoleNames, StringComparer.OrdinalIgnoreCase);
+        employeeRoleSet ??= StaffRoleHelper.CreateRoleSet();
 
         return await _db.Roles.AsNoTracking()
             .Where(r => employeeRoleSet.Contains(r.Name))

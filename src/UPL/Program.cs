@@ -64,7 +64,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(RoleConstants.StaffAccessPolicy, policy =>
+        policy.RequireAssertion(context => StaffRoleHelper.HasStaffAccess(context.User)));
+});
 
 var app = builder.Build();
 

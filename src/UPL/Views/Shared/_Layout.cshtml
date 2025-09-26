@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+@{
+    var staffAreaUrl = Url.Action("Index", "Home", new { area = "Staff" }) ?? Url.Content("~/Staff");
+    var hasStaffAccess = StaffRoleHelper.HasStaffAccess(User);
+}
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
@@ -35,7 +39,14 @@
                 <div class="header-right d-flex align-items-center gap-3">
                     <ul class="header-menu list-unstyled d-flex align-items-center gap-3 mb-0">
                         <li><a class="nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Học viên</a></li>
-                        <li><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Ban điều hành</a></li>
+                        @if (hasStaffAccess)
+                        {
+                            <li><a class="nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Ban điều hành</a></li>
+                        }
+                        else
+                        {
+                            <li><a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@staffAreaUrl">Ban điều hành</a></li>
+                        }
                         @if (!User.Identity?.IsAuthenticated ?? true)
                         {
                             <li><a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
@@ -52,7 +63,7 @@
                                     {
                                         <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
                                     }
-                                    @if (User.IsInRole("Staff"))
+                                    @if (hasStaffAccess)
                                     {
                                         <li><a class="dropdown-item" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang Ban điều hành</a></li>
                                     }
@@ -93,7 +104,14 @@
                     <hr class="mobile-nav-divider" />
                     <ul class="list-unstyled mobile-nav-actions">
                         <li><a class="mobile-nav-link" asp-area="Student" asp-controller="Home" asp-action="Index">Học viên</a></li>
-                        <li><a class="mobile-nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Ban điều hành</a></li>
+                        @if (hasStaffAccess)
+                        {
+                            <li><a class="mobile-nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Ban điều hành</a></li>
+                        }
+                        else
+                        {
+                            <li><a class="mobile-nav-link" asp-area="" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@staffAreaUrl">Ban điều hành</a></li>
+                        }
                         @if (!User.Identity?.IsAuthenticated ?? true)
                         {
                             <li><a class="mobile-nav-link" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
@@ -106,7 +124,7 @@
                             {
                                 <li><a class="mobile-nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">Trang quản trị</a></li>
                             }
-                            @if (User.IsInRole("Staff"))
+                            @if (hasStaffAccess)
                             {
                                 <li><a class="mobile-nav-link" asp-area="Staff" asp-controller="Home" asp-action="Index">Trang Ban điều hành</a></li>
                             }
